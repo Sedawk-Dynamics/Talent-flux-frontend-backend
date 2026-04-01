@@ -56,7 +56,7 @@ export function Services() {
   ]
 
   return (
-    <section id="services" ref={ref} className="py-16 md:py-24">
+    <section id="services" ref={ref} className="pt-8 pb-16 md:pt-12 md:pb-24">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

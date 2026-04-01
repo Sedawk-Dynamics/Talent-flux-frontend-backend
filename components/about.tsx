@@ -31,7 +31,7 @@ export function About() {
   ]
 
   return (
-    <section id="about" ref={ref} className="py-16 md:py-24 bg-muted/30">
+    <section id="about" ref={ref} className="pt-16 md:pt-24 pb-6 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-8 items-center max-w-7xl mx-auto mb-12">
           <motion.div

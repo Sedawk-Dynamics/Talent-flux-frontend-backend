@@ -6,13 +6,15 @@ import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null)
+  const pathname = usePathname()
 
   const navItems = [
-    {name: "Home", href: "/"},
+    { name: "Home", href: "/" },
     { name: "About", href: "/about" },
     {
       name: "Our Services",
@@ -34,20 +36,17 @@ export function Header() {
         { name: "Submit CV", href: "/submit-cv" },
       ],
     },
-    { name: "Pricing", href: "/pricing" },
-    { name: "Contact", href: "/contact" },
   ]
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
-          
+
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
           >
             <Link href="/">
               <Image
@@ -62,75 +61,79 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {navItems.map((item, index) => (
-              <motion.div
-                key={item.name}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="relative"
-                onMouseEnter={() => item.dropdown && setActiveDropdown(item.name)}
-                onMouseLeave={() => item.dropdown && setActiveDropdown(null)}
-              >
-                {/* Dropdown Items */}
-                {item.dropdown ? (
-                  <>
-                    <button
-                      className={`text-sm font-medium flex items-center gap-1 transition-colors ${
-                        item.highlight
-                          ? "text-primary font-bold px-4 py-2 rounded-full bg-primary/10 border border-primary/20"
+            {navItems.map((item) => {
+              const isActiveParent =
+                pathname === item.href ||
+                item.dropdown?.some((d) => d.href === pathname)
+
+              return (
+                <div
+                  key={item.name}
+                  className="relative"
+                  onMouseEnter={() => item.dropdown && setActiveDropdown(item.name)}
+                  onMouseLeave={() => item.dropdown && setActiveDropdown(null)}
+                >
+                  {item.dropdown ? (
+                    <>
+                      <button
+                        className={`text-sm font-medium flex items-center gap-1 transition-colors ${
+                          isActiveParent
+                            ? "text-primary font-bold px-4 py-2 rounded-full bg-primary/10 border border-primary/20"
+                            : "text-foreground hover:text-primary"
+                        }`}
+                      >
+                        {item.name}
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+
+                      <AnimatePresence>
+                        {activeDropdown === item.name && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="absolute top-full mt-2 left-0 bg-background border border-border rounded-lg shadow-lg py-2 min-w-[200px]"
+                          >
+                            {item.dropdown.map((dropdownItem) => {
+  const isTraining = dropdownItem.name === "Training"
+
+  return (
+    <Link
+      key={dropdownItem.name}
+      href={dropdownItem.href}
+      className={`block px-4 py-2 text-sm transition-colors ${
+        isTraining
+          ? "text-primary font-semibold bg-primary/10 rounded-md"
+          : "text-foreground hover:bg-muted hover:text-primary"
+      }`}
+    >
+      {dropdownItem.name}
+    </Link>
+  )
+})}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`text-sm font-medium transition-colors ${
+                        pathname === item.href
+                          ? "text-primary font-bold"
                           : "text-foreground hover:text-primary"
                       }`}
                     >
                       {item.name}
-                      <ChevronDown className="h-4 w-4" />
-                    </button>
-
-                    <AnimatePresence>
-                      {activeDropdown === item.name && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          transition={{ duration: 0.2 }}
-                          className="absolute top-full mt-2 left-0 bg-background border border-border rounded-lg shadow-lg py-2 min-w-[200px]"
-                        >
-                          {item.dropdown.map((dropdownItem) => (
-                            <Link
-                              key={dropdownItem.name}
-                              href={dropdownItem.href}
-                              className="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
-                            >
-                              {dropdownItem.name}
-                            </Link>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </>
-                ) : (
-                  <Link
-                    href={item.href}
-                    className={`text-sm font-medium transition-colors ${
-                      item.highlight
-                        ? "text-primary font-bold px-4 py-2 rounded-full bg-primary/10 border border-primary/20"
-                        : "text-foreground hover:text-primary"
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                )}
-              </motion.div>
-            ))}
+                    </Link>
+                  )}
+                </div>
+              )
+            })}
           </nav>
 
           {/* Desktop Buttons */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="hidden lg:flex items-center gap-4"
-          >
+          <div className="hidden lg:flex items-center gap-4">
             <Button asChild size="sm" variant="outline">
               <a href="/contact" className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
@@ -140,7 +143,7 @@ export function Header() {
             <Button asChild size="sm">
               <a href="/contact">Get Started</a>
             </Button>
-          </motion.div>
+          </div>
 
           {/* Mobile Menu Button */}
           <button
@@ -168,23 +171,33 @@ export function Header() {
                     <>
                       <p className="text-sm font-medium">{item.name}</p>
                       <div className="pl-4 space-y-2">
-                        {item.dropdown.map((dropdownItem) => (
-                          <Link
-                            key={dropdownItem.name}
-                            href={dropdownItem.href}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="block text-sm text-muted-foreground hover:text-primary"
-                          >
-                            {dropdownItem.name}
-                          </Link>
-                        ))}
+                        {item.dropdown.map((dropdownItem) => {
+                          const isActive = pathname === dropdownItem.href
+
+                          return (
+                            <Link
+                              key={dropdownItem.name}
+                              href={dropdownItem.href}
+                              onClick={() => setMobileMenuOpen(false)}
+                              className={`block text-sm ${
+                                isActive
+                                  ? "text-primary font-semibold"
+                                  : "text-muted-foreground hover:text-primary"
+                              }`}
+                            >
+                              {dropdownItem.name}
+                            </Link>
+                          )
+                        })}
                       </div>
                     </>
                   ) : (
                     <Link
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="text-sm font-medium"
+                      className={`text-sm font-medium ${
+                        pathname === item.href ? "text-primary" : ""
+                      }`}
                     >
                       {item.name}
                     </Link>

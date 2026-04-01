@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { prisma } from "@/lib/prisma"
 import { ADMIN_AUTH_COOKIE, verifyAdminToken } from "@/lib/auth"
-
+export const dynamic = "force-dynamic"
 async function requireAdmin() {
   const cookieStore = await cookies()
   const token = cookieStore.get(ADMIN_AUTH_COOKIE)?.value
