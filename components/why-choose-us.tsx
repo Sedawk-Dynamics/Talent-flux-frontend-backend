@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef } from "react"
 import { CheckCircle2 } from "lucide-react"
-
+  
 export function WhyChooseUs() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
