@@ -4,7 +4,7 @@ export const ADMIN_AUTH_COOKIE = "talentflux_admin_token"
 
 type AdminJWTPayload = {
   sub: string
-  role: "admin"
+  role: "admin" 
   email: string
 }
 
