@@ -12,6 +12,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 
+export const dynamic = "force-dynamic"
+export const runtime = "nodejs"
+
 async function requireAdmin() {
   const cookieStore = await cookies()
   const token = cookieStore.get(ADMIN_AUTH_COOKIE)?.value
