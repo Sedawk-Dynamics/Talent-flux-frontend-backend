@@ -15,6 +15,8 @@ import {
   Send,
   Building2,
 } from "lucide-react"
+
+export const dynamic = "force-dynamic";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
