@@ -1,5 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Prisma schema — PostgreSQL for production (Vercel serverless).
+// Local: set DATABASE_URL to a Postgres instance (Docker, Supabase, Neon, etc.).
+// Vercel: use a pooled connection string from your provider (not SQLite / not file: URLs).
 
 generator client {
   provider = "prisma-client-js"
