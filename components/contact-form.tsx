@@ -1,9 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { motion } from "framer-motion"
-import { useInView } from "framer-motion"
+import { motion, useInView } from "framer-motion"
 import { useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,6 +12,7 @@ import { Mail, Phone, MapPin, Send } from "lucide-react"
 export function ContactForm() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,13 +21,47 @@ export function ContactForm() {
     message: "",
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Form submitted:", formData)
-    // Handle form submission here
+    setLoading(true)
+
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        alert("Message sent successfully!")
+
+        // reset form
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          company: "",
+          message: "",
+        })
+      } else {
+        alert("Failed to send message")
+      }
+    } catch (error) {
+      alert("Something went wrong")
+    }
+
+    setLoading(false)
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -40,154 +73,119 @@ export function ContactForm() {
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-balance">Get In Touch</h2>
-          <p className="text-lg text-muted-foreground text-balance leading-relaxed">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4">
+            Get In Touch
+          </h2>
+          <p className="text-lg text-muted-foreground">
             Ready to transform your hiring process or advance your career? Let's start a conversation.
           </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          {/* Contact Information */}
+          {/* Left Side */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.5 }}
             className="space-y-8"
           >
             <div>
               <h3 className="text-2xl font-bold mb-6">Contact Information</h3>
-              <p className="text-muted-foreground mb-8 leading-relaxed">
-                Have questions about our services? Our team is here to help you find the perfect talent solution or
-                guide you toward your next career opportunity.
+              <p className="text-muted-foreground">
+                Have questions? Our team is here to help you.
               </p>
             </div>
 
             <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Mail className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Email</h4>
-                  <a
-                    href="mailto:inquiry@talentflux.co.in"
-                    className="text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    inquiry@talentflux.co.in
-                  </a>
-                </div>
+              <div className="flex gap-4">
+                <Mail className="text-primary" />
+                <a href="mailto:inquiry@talentflux.co.in">
+                  inquiry@talentflux.co.in
+                </a>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                  <Phone className="h-5 w-5 text-secondary" />
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Phone</h4>
-                  <a href="tel:+917703881471" className="text-muted-foreground hover:text-secondary transition-colors">
-                    +91-7703881471
-                  </a>
-                </div>
+              <div className="flex gap-4">
+                <Phone className="text-secondary" />
+                <a href="tel:+917703881471">+91-7703881471</a>
               </div>
 
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="h-5 w-5 text-accent" />
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-1">Office</h4>
-                  <p className="text-muted-foreground">
-                    C2-101, 1st Floor, Supertech Ecovillage 2, <br />
-                    Greater Noida West, Noida, Gautam Buddha Nagar-201306, India
-                  </p>
-                </div>
+              <div className="flex gap-4">
+                <MapPin className="text-accent" />
+                <p>
+                  Greater Noida West, Noida <br />
+                  India
+                </p>
               </div>
-            </div>
-
-            {/* Office Image */}
-            <div className="rounded-2xl overflow-hidden border border-border">
-              <img src="/modern-office-collaboration.png" alt="TalentFlux Office" className="w-full h-64 object-cover" />
             </div>
           </motion.div>
 
-          {/* Contact Form */}
+          {/* Form */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.5 }}
           >
-            <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name *</Label>
+            <form
+              onSubmit={handleSubmit}
+              className="bg-card border rounded-2xl p-8 space-y-6"
+            >
+              <div>
+                <Label>Full Name *</Label>
                 <Input
-                  id="name"
                   name="name"
-                  type="text"
-                  placeholder="John Doe"
                   value={formData.name}
                   onChange={handleChange}
                   required
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
+              <div>
+                <Label>Email *</Label>
                 <Input
-                  id="email"
                   name="email"
                   type="email"
-                  placeholder="john@example.com"
                   value={formData.email}
                   onChange={handleChange}
                   required
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number *</Label>
+              <div>
+                <Label>Phone *</Label>
                 <Input
-                  id="phone"
                   name="phone"
-                  type="tel"
-                  placeholder="+91 98765 43210"
                   value={formData.phone}
                   onChange={handleChange}
                   required
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="company">Company Name</Label>
+              <div>
+                <Label>Company</Label>
                 <Input
-                  id="company"
                   name="company"
-                  type="text"
-                  placeholder="Your Company"
                   value={formData.company}
                   onChange={handleChange}
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="message">Message *</Label>
+              <div>
+                <Label>Message *</Label>
                 <Textarea
-                  id="message"
                   name="message"
-                  placeholder="Tell us about your hiring needs or career goals..."
                   value={formData.message}
                   onChange={handleChange}
-                  rows={4}
                   required
                 />
               </div>
 
-              <Button type="submit" size="lg" className="w-full group">
-                Send Message
-                <Send className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Sending..." : "Send Message"}
+                <Send className="ml-2 h-4 w-4" />
               </Button>
             </form>
           </motion.div>
