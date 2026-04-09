@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
     // ✅ Send email with attachment
     await transporter.sendMail({
-      from: `"CV Submission" <${process.env.SMTP_USER}>`,
+      from: "CV Submission",
       to: process.env.TO_EMAIL,
       subject: `New CV: ${firstName} ${lastName}`,
       html: `

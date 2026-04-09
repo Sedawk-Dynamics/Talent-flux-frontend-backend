@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
     // ✅ Email to ADMIN only
     await transporter.sendMail({
-      from: `"Website Lead" <${process.env.SMTP_USER}>`,
+      from: "Talent Flux Website Lead",
       to: process.env.TO_EMAIL,
       subject: "New Contact Form Submission",
       html: `
